@@ -7,11 +7,12 @@ from app.schemas.meeting_room import MeetingRoomCreate, MeetingRoomDB
 from app.crud.meeting_room import create_meeting_room, get_room_id_by_name, read_all_rooms_from_db
 
 
-router = APIRouter()
+router = APIRouter(prefix='/meeting_rooms',
+                   tags=['Meeting Rooms']
+                   )
 
 
-@router.post('/meeting_rooms/',
-             response_model=MeetingRoomDB,
+@router.post('/', response_model=MeetingRoomDB,
              response_model_exclude_none=True)
 async def create_new_meeting_room(
         meeting_room: MeetingRoomCreate,
@@ -26,8 +27,7 @@ async def create_new_meeting_room(
     return new_room
 
 
-@router.get('/meeting_rooms/',
-            response_model=list[MeetingRoomDB],
+@router.get('/', response_model=list[MeetingRoomDB],
             response_model_exclude_none=True)
 async def get_all_meeting_rooms(
         session: AsyncSession = Depends(get_async_session)):
