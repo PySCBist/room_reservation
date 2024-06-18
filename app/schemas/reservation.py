@@ -1,3 +1,5 @@
+from typing import Optional
+
 from pydantic import BaseModel, validator, root_validator, Extra, Field
 from datetime import datetime, timedelta
 
@@ -41,6 +43,7 @@ class ReservationCreate(ReservationUpdate):
 class ReservationDB(ReservationBase):
     id: int
     meetingroom_id: int
+    user_id: Optional[int]
 
     class Config:
         # Схема может принимать на вход объект базы данных (для response_model = MeetingRoomDB)
