@@ -43,9 +43,11 @@ async def get_all_reservations(
 @router.delete('/{reservation_id}', response_model=ReservationDB)
 async def delete_reservation(
         reservation_id: int,
+        user: User = Depends(current_user),
         session: AsyncSession = Depends(get_async_session)
 ):
-    reservation = await check_reservation_before_edit(reservation_id, session)
+    reservation = await check_reservation_before_edit(
+        reservation_id, user, session)
     reservation = await reservation_crud.remove(reservation, session)
     return reservation
 
@@ -54,9 +56,11 @@ async def delete_reservation(
 async def update_reservation(
         reservation_id: int,
         obj_in: ReservationUpdate,
+        user: User = Depends(current_user),
         session: AsyncSession = Depends(get_async_session)
 ):
-    reservation = await check_reservation_before_edit(reservation_id, session)
+    reservation = await check_reservation_before_edit(
+        reservation_id, user, session)
     await check_reservation_intersections(
         **obj_in.dict(),
         reservation_id=reservation_id,
