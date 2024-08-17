@@ -11,6 +11,8 @@ from app.crud.reservation import reservation_crud
 from app.api.validators import check_meeting_room_exists, check_name_duplicate
 from app.schemas.reservation import ReservationDB
 
+from fastapi_cache.decorator import cache
+
 router = APIRouter()
 
 
@@ -31,6 +33,7 @@ async def create_new_meeting_room(
 @router.get('/',
             response_model=list[MeetingRoomDB],
             response_model_exclude_none=True)
+@cache(expire=30)
 async def get_all_meeting_rooms(
         session: AsyncSession = Depends(get_async_session)):
     all_rooms = await meeting_room_crud.get_multi(session)
