@@ -133,3 +133,4 @@ media/
 /store/migrations/
 /settings for debug
 fastapi.db
+/app/static/images/*

@@ -1,4 +1,6 @@
-from fastapi import APIRouter, Depends
+import shutil
+
+from fastapi import APIRouter, Depends, UploadFile
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -12,6 +14,8 @@ from app.api.validators import check_meeting_room_exists, check_name_duplicate
 from app.schemas.reservation import ReservationDB
 
 from fastapi_cache.decorator import cache
+
+from app.tasks.tasks import process_pic
 
 router = APIRouter()
 
@@ -84,3 +88,12 @@ async def get_reservations_for_room(
         meeting_room_id, session
     )
     return reservations
+
+
+@router.post("/image")
+async def add_room_image(name: int, file: UploadFile):
+    """Загружаем картинку переговорки"""
+    im_path = f'app/static/images/{name}.webp'
+    with open(im_path, 'wb+') as file_object:
+        shutil.copyfileobj(file.file, file_object)
+    process_pic.delay(im_path)
